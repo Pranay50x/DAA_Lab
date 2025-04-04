@@ -1,0 +1,52 @@
+# Ignore build artifacts and temporary files
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.exe
+*.out
+*.clangd
+
+# Ignore debugging files
+*.dSYM/
+*.stackdump
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+.clangd/
+.clang-format
+.clang-tidy
+
+# Ignore macOS-specific files
+.DS_Store
+**/.DS_Store
+._.DS_Store
+**/._.DS_Store
+
+# Ignore Visual Studio-related files (if applicable)
+*.vcxproj.user
+*.suo
+.vs/
+
+# Ignore temporary logs and cache files
+*.log
+*.tmp
+
+# Ignore Python virtual environment (if used in the project)
+venv/
+__pycache__/
+
+# Ignore build directories
+build/
+dist/
+bin/
+obj/
+
+# Ignore global system files (optional)
+Thumbs.db
+
+# Ignore other common generated files
+tags
+*.swp
