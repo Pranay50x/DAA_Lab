@@ -1,63 +1,65 @@
 #include <iostream>
-#include <ctime>
-#include <vector>
 #include <iomanip>
+#include <vector>
+#include <stack>
+#include <algorithm>
+#include <ctime>
 
 using namespace std;
 
-class Solution {
-public:
-    void dfsHelper(int node, vector<vector<int>>& adjMat, vector<int>& vis, vector<int>& dfs) {
-        vis[node] = 1;
-        dfs.push_back(node);
+void addEdge(vector<int> adj[], int u, int v){
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
 
-        for (int i = 1; i < adjMat.size(); i++) {
-            if (adjMat[node][i] == 1 && !vis[i]) {
-                dfsHelper(i, adjMat, vis, dfs);
+
+void dfsStack(int V, vector<int> adj[], int start){
+    vector<bool> visited(V+1, false); // this is array of vectors the adj[] one
+    stack <int> st;
+    // pushing the first node into the stack
+    st.push(start);
+
+
+    while(!st.empty()){
+        int node = st.top();
+
+        st.pop();
+        //returning the output and marking the node as visited in the array
+        if(!visited[node]){
+            cout << node << " ";
+            visited[node] =true;
+        }
+        // traversing the adjaceny matrix and then pushing the neighbour of the node we visited already.
+        for(int i = adj[node].size()-1; i>=0;i--){
+            int neighbour = adj[node][i];
+
+            if(!visited[neighbour]){
+                st.push(neighbour);
             }
         }
     }
-
-    vector<int> dfsGraph(int V, vector<vector<int>>& adjMat) {
-        vector<int> vis(V + 1, 0);
-        vector<int> dfs;
-        dfsHelper(1, adjMat, vis, dfs); // start DFS from node 1
-        return dfs;
-    }
-};
-
-void printA(const vector<int>& ans) {
-    for (int x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
 }
 
-int main() {
-    int V, E;
-    cout << "Enter number of vertices and edges: ";
+int main(){
+    clock_t st,et;
+    st = clock();
+    cout << "Enter the number of vertices and edges: " ;
+    int V,E;
     cin >> V >> E;
 
-    vector<vector<int>> adjMat(V + 1, vector<int>(V + 1, 0));
+    vector<int> adj[V+1]; //declaring and using array of vectors
 
-    cout << "Enter each edge (u v) on its own line:\n";
-    for (int i = 0; i < E; i++) {
-        int u, v;
+    cout << "Enter pair of edges and vertices: \n";
+    for(int i = 0;i<E;i++){
+        int u,v;
         cin >> u >> v;
-        adjMat[u][v] = 1;
-        adjMat[v][u] = 1;
+        addEdge(adj, u ,v);
     }
-
-    clock_t st = clock();
-
-    Solution sol;
-    vector<int> fin = sol.dfsGraph(V, adjMat);
-
-    printA(fin);
-
-    clock_t et = clock();
-    double time = double(et - st) / CLOCKS_PER_SEC;
-    cout << "Time used is: " << fixed << setprecision(6) << time << " s\n";
-
+    cout << "DFS Traversal: \n";
+    dfsStack(V, adj, 1);
+    cout << endl;
+    et = clock();
+    double time_used = (double(et-st))/CLOCKS_PER_SEC;
+    cout << "Time used is: " << fixed << setprecision(6) << time_used << " s\n";
     return 0;
 }
