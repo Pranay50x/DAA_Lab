@@ -6,15 +6,19 @@
 
 using namespace std;
 
-void addEdge(vector<int> adj[], int u, int v) {
-    adj[u].push_back(v);
+void addEdge(vector<vector<bool>> &matrix, int u, int v) {
+    matrix[u][v] = true;
 }
 
-vector<int> kahnTopSort(int n, vector<int> adj[]) {
+vector<int> kahnTopSort(int n, vector<vector<bool>> &matrix) {
     vector<int> in_degree(n+1, 0);
-    for (int i = 1; i <= n; i++) {
-        for (auto x : adj[i]) {
-            in_degree[x]++;
+
+    // Calculate in-degrees
+    for (int u = 1; u <= n; u++) {
+        for (int v = 1; v <= n; v++) {
+            if (matrix[u][v]) {
+                in_degree[v]++;
+            }
         }
     }
 
@@ -31,15 +35,17 @@ vector<int> kahnTopSort(int n, vector<int> adj[]) {
         q.pop();
         top_order.push_back(u);
 
-        for (auto x : adj[u]) {
-            in_degree[x]--;
-            if (in_degree[x] == 0) {
-                q.push(x);
+        // Process all neighbors
+        for (int v = 1; v <= n; v++) {
+            if (matrix[u][v]) {
+                if (--in_degree[v] == 0) {
+                    q.push(v);
+                }
             }
         }
     }
 
-    if ((int)top_order.size() != n) {
+    if (top_order.size() != n) {
         cout << "There exists a cycle in the graph, topological sort not possible." << endl;
         return {};
     }
@@ -55,17 +61,18 @@ int main() {
     int V, E;
     cin >> V >> E;
 
-    vector<int> adj[V+1];
+    // Initialize adjacency matrix (V+1 x V+1 for 1-based indexing)
+    vector<vector<bool>> matrix(V+1, vector<bool>(V+1, false));
 
     cout << "Enter pair of edges and vertices: \n";
     for (int i = 0; i < E; i++) {
         int u, v;
         cin >> u >> v;
-        addEdge(adj, u, v);
+        addEdge(matrix, u, v);
     }
 
     cout << "Topological Sort using Kahn's Algorithm: \n";
-    vector<int> ts = kahnTopSort(V, adj);
+    vector<int> ts = kahnTopSort(V, matrix);
     for (int x : ts) {
         cout << x << " ";
     }
