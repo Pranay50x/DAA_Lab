@@ -1,54 +1,81 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <ctime>
 #include <iomanip>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
-vector<int> kahnTopSortGraph(int V, vector<vector<int>> &adj) {
-    vector<int> in_deg(V+1, 0), order;
-    for (int u = 1; u <= V; ++u)
-        for (int v = 1; v <= V; ++v)
-            if (adj[u][v])
-                in_deg[v]++;
+vector<int> kahns(int v, vector<vector<int>> &adj){
     queue<int> q;
-    for (int i = 1; i <= V; ++i)
-        if (in_deg[i] == 0)
-            q.push(i);
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        order.push_back(u);
-        for (int v = 1; v <= V; ++v) {
-            if (adj[u][v] && --in_deg[v] == 0)
-                q.push(v);
+    vector<int> indegree(v+1, 0);
+
+    vector<int> res;
+
+    for(int i =1;i<=v;i++){
+        for(int j =1;j<=v;j++){
+            if(adj[i][j]==1){
+                indegree[j]++;
+            }
         }
     }
-    return order.size() == V ? order : vector<int>{};
-}
 
-void printAns(const vector<int> &v) {
-    for (int x : v)
-        cout << x << " ";
-    cout << endl;
-}
-
-int main() {
-    clock_t st = clock();
-    int V, E;
-    cout << "Enter the no. of vertices and edges: ";
-    cin >> V >> E;
-    vector<vector<int>> adj(V+1, vector<int>(V+1, 0));
-    cout << "Enter each edge (u v) on its own line: \n";
-    for (int i = 0; i < E; ++i) {
-        int u, w;
-        cin >> u >> w;
-        adj[u][w] = 1;
+    for(int i =1;i<=v;i++){
+        if(indegree[i]==0){
+            q.push(i);
+        }
     }
-    vector<int> result = kahnTopSortGraph(V, adj);
-    printAns(result);
+
+    while(!q.empty()){
+        int node = q.front();
+        q.pop();
+        res.push_back(node);
+
+        for(int i =1;i<=v;i++){
+            if(adj[node][i] ==1){
+                indegree[i]--;
+                if(indegree[i]==0){
+                    q.push(i);
+                }
+            }
+        }
+    }
+
+    return res;
+}
+
+
+void printAns(vector <int> &v){
+    for(int i : v) {
+        cout << i << " ";
+    }
+    cout<<endl;
+}
+
+int main(){
+    clock_t st = clock();
+
+    int v,e;
+
+    cout << "Enter the no.of vertices and edges: ";
+    cin >> v >> e;
+
+    vector <vector<int>> adj(v+1, vector<int>(v+1, 0));
+
+    cout << "Enter the pair of edges (u v) in order: ";
+
+    for(int i =0;i<e;i++){
+        int u,t;
+        cin >> u >> t;
+        adj[u][t] = 1;
+    }
+
+    vector <int> fin = kahns(v, adj);
+    printAns(fin);
+
     clock_t et = clock();
-    double time = double(et - st) / CLOCKS_PER_SEC;
-    cout << "Time used is " << fixed << setprecision(6) << time << " s\n";
+
+    double time = (double(et-st))/CLOCKS_PER_SEC;
+    cout << "Time used is "<<fixed <<setprecision(6) << time << " s\n";
     return 0;
 }
