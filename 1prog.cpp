@@ -14,25 +14,25 @@ int gcd(int x, int y) {
     return -1;
 }
 
-void middle_school(int x, int y) {
-    unordered_set<int> factors_x;
+void middle_school(int x, int y){
+    unordered_set<int>  s;
 
-    // Find factors of x
-    for (int i = 1; i <= x; i++) {
-        if (x % i == 0) {
-            factors_x.insert(i);
+    if(x>y){
+        swap(x,y); 
+    }
+    for(int i =1;i<=x;i++){
+        if(x%i==0)
+            s.insert(i); 
+    }
+
+    int temp = 1; 
+    for(int i =1;i<=y;i++){
+        if(y%i==0 && s.find(i) != s.end()){
+            temp =i; 
         }
     }
 
-    int temp = 0;
-    // Find common factors with y
-    for (int i = 1; i <= y; i++) {
-        if (y % i == 0 && factors_x.find(i) != factors_x.end()) {
-            temp = i;
-        }
-    }
-
-    cout << "GCD is " << temp << "\n";
+    cout << "GCD is " << temp << " \n"; 
 }
 
 int gcd2(int x, int y) {
