@@ -44,10 +44,10 @@ int main() {
     vector<vector<int>> adj(v+1, vector<int>(v+1, 0));
     cout << "Enter each edge (u v) on its own line: \n";
     for(int i = 0; i < e; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u][v] = 1;
-        adj[v][u] = 1;
+        int u, t;
+        cin >> u >> t;
+        adj[u][t] = 1;
+        adj[t][u] = 1;
     }
     
     vector<int> answer = dfsGraph(v, adj);
