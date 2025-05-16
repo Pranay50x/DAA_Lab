@@ -1,86 +1,81 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <ctime>
 #include <iomanip>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
-void addEdge(vector<vector<bool>> &matrix, int u, int v) {
-    matrix[u][v] = true;
-}
+vector<int> kahns(int v, vector<vector<int>> &adj){
+    queue<int> q;
+    vector<int> indegree(v+1, 0);
 
-vector<int> kahnTopSort(int n, vector<vector<bool>> &matrix) {
-    vector<int> in_degree(n+1, 0);
+    vector<int> res;
 
-    // Calculate in-degrees
-    for (int u = 1; u <= n; u++) {
-        for (int v = 1; v <= n; v++) {
-            if (matrix[u][v]) {
-                in_degree[v]++;
+    for(int i =1;i<=v;i++){
+        for(int j =1;j<=v;j++){
+            if(adj[i][j]==1){
+                indegree[j]++;
             }
         }
     }
 
-    queue<int> q;
-    for (int i = 1; i <= n; i++) {
-        if (in_degree[i] == 0) {
+    for(int i =1;i<=v;i++){
+        if(indegree[i]==0){
             q.push(i);
         }
     }
 
-    vector<int> top_order;
-    while (!q.empty()) {
-        int u = q.front();
+    while(!q.empty()){
+        int node = q.front();
         q.pop();
-        top_order.push_back(u);
+        res.push_back(node);
 
-        // Process all neighbors
-        for (int v = 1; v <= n; v++) {
-            if (matrix[u][v]) {
-                if (--in_degree[v] == 0) {
-                    q.push(v);
+        for(int i =1;i<=v;i++){
+            if(adj[node][i] ==1){
+                indegree[i]--;
+                if(indegree[i]==0){
+                    q.push(i);
                 }
             }
         }
     }
 
-    if (top_order.size() != n) {
-        cout << "There exists a cycle in the graph, topological sort not possible." << endl;
-        return {};
-    }
-
-    return top_order;
+    return res;
 }
 
-int main() {
-    clock_t st, et;
-    st = clock();
 
-    cout << "Enter the number of vertices and edges: ";
-    int V, E;
-    cin >> V >> E;
+void printAns(vector <int> &v){
+    for(int i : v) {
+        cout << i << " ";
+    }
+    cout<<endl;
+}
 
-    // Initialize adjacency matrix (V+1 x V+1 for 1-based indexing)
-    vector<vector<bool>> matrix(V+1, vector<bool>(V+1, false));
+int main(){
+    clock_t st = clock();
 
-    cout << "Enter pair of edges and vertices: \n";
-    for (int i = 0; i < E; i++) {
-        int u, v;
-        cin >> u >> v;
-        addEdge(matrix, u, v);
+    int v,e;
+
+    cout << "Enter the no.of vertices and edges: ";
+    cin >> v >> e;
+
+    vector <vector<int>> adj(v+1, vector<int>(v+1, 0));
+
+    cout << "Enter the pair of edges (u v) in order: ";
+
+    for(int i =0;i<e;i++){
+        int u,t;
+        cin >> u >> t;
+        adj[u][t] = 1;
     }
 
-    cout << "Topological Sort using Kahn's Algorithm: \n";
-    vector<int> ts = kahnTopSort(V, matrix);
-    for (int x : ts) {
-        cout << x << " ";
-    }
-    cout << endl;
+    vector <int> fin = kahns(v, adj);
+    printAns(fin);
 
-    et = clock();
-    double time_used = (double)(et - st) / CLOCKS_PER_SEC;
-    cout << "Time used is: " << fixed << setprecision(6) << time_used << " s\n";
+    clock_t et = clock();
 
+    double time = (double(et-st))/CLOCKS_PER_SEC;
+    cout << "Time used is "<<fixed <<setprecision(6) << time << " s\n";
     return 0;
 }

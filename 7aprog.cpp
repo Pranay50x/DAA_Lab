@@ -1,74 +1,60 @@
 #include <iostream>
-#include <ctime>
-#include <iomanip>
 #include <vector>
 #include <stack>
+#include <ctime>
+#include <iomanip>
 
 using namespace std;
 
-void findTopSort(int node, vector<int> &visited, stack<int> &st, vector<vector<bool>> &matrix, int V) {
-    visited[node] = 1;
-
-    // Check all possible neighbors
-    for (int x = 1; x <= V; x++) {
-        if (matrix[node][x] && !visited[x]) {
-            findTopSort(x, visited, st, matrix, V);
+void topoDFS(int node, vector<int> &vis, stack<int> &st, vector<vector<int>> &adj, int V) {
+    vis[node] = 1;
+    for (int i = 1; i <= V; ++i) {
+        if (adj[node][i] && !vis[i]) {
+            topoDFS(i, vis, st, adj, V);
         }
     }
     st.push(node);
 }
 
-vector<int> topSort(int n, vector<vector<bool>> &matrix) {
+vector<int> topSortGraph(int V, vector<vector<int>> &adj) {
+    vector<int> vis(V+1, 0);
     stack<int> st;
-    vector<int> visited(n+1, 0);
-
-    // Corrected loop to process all nodes
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            findTopSort(i, visited, st, matrix, n);
+    for (int i = 1; i <= V; ++i) {
+        if (!vis[i]) {
+            topoDFS(i, vis, st, adj, V);
         }
     }
-
-    vector<int> top;
+    vector<int> order;
     while (!st.empty()) {
-        top.push_back(st.top());
+        order.push_back(st.top());
         st.pop();
     }
-    return top;
+    return order;
 }
 
-void addEdge(vector<vector<bool>> &matrix, int u, int v) {
-    matrix[u][v] = true;
-}
-
-int main() {
-    clock_t st, et;
-    st = clock();
-
-    cout << "Enter the number of vertices and edges: ";
-    int V, E;
-    cin >> V >> E;
-
-    // Initialize adjacency matrix
-    vector<vector<bool>> matrix(V+1, vector<bool>(V+1, false));
-
-    cout << "Enter pair of edges and vertices: \n";
-    for (int i = 0; i < E; i++) {
-        int u, v;
-        cin >> u >> v;
-        addEdge(matrix, u, v);
-    }
-
-    cout << "Topological Sort: \n";
-    vector<int> ts = topSort(V, matrix);
-    for (int x : ts) {
+void printAns(const vector<int> &v) {
+    for (int x : v) {
         cout << x << " ";
     }
     cout << endl;
+}
 
-    et = clock();
-    double time_used = (double)(et - st) / CLOCKS_PER_SEC;
-    cout << "Time used is: " << fixed << setprecision(6) << time_used << " s\n";
-
+int main() {
+    clock_t st = clock();
+    int V, E;
+    cout << "Enter the no. of vertices and edges: ";
+    cin >> V >> E;
+    vector<vector<int>> adj(V+1, vector<int>(V+1, 0));
+    cout << "Enter each edge (u v) on its own line: \n";
+    for (int i = 0; i < E; ++i) {
+        int u, w;
+        cin >> u >> w;
+        adj[u][w] = 1;
+    }
+    vector<int> result = topSortGraph(V, adj);
+    printAns(result);
+    clock_t et = clock();
+    double time = double(et - st) / CLOCKS_PER_SEC;
+    cout << "Time used is " << fixed << setprecision(6) << time << " s\n";
     return 0;
 }
