@@ -9,6 +9,8 @@
 *.clangd
 *.un~
 
+
+
 # Ignore debugging files
 *.dSYM/
 *.stackdump
@@ -38,6 +40,7 @@
 # Ignore Python virtual environment (if used in the project)
 venv/
 __pycache__/
+daa_p/
 
 # Ignore build directories
 build/
