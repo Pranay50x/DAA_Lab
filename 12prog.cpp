@@ -1,45 +1,56 @@
+// Prim’s MST using an adjacency-matrix
 #include <iostream>
 #include <vector>
-#include <limits>
-
+#include <limits>    // for INT_MAX
 using namespace std;
-const int V = 5;
-const vector<char> names = {'A','B','C','D','E'};
 
-int main(){
-    vector<vector<int>> g = {
-        {0,5,0,4,0},
-        {5,0,7,9,0},
-        {0,7,0,9,5},
-        {4,9,9,0,8},
-        {0,0,5,8,0}
-    };
-
-    vector<int> key(V, numeric_limits<int>::max()),
-                parent(V, -1);
+// Compute & print MST, return total weight
+int primMST_matrix(int V, const vector<vector<int>>& g, int start) {
+    vector<int> key(V, numeric_limits<int>::max()), parent(V, -1);
     vector<bool> inMST(V, false);
+    key[start] = 0;
 
-    key[0] = 0;
-    for(int i = 0; i < V-1; ++i){
+    for (int count = 0; count < V; ++count) {
+        // pick next u
         int u = -1;
-        for(int j = 0; j < V; ++j)
-            if(!inMST[j] && (u<0 || key[j] < key[u]))
-                u = j;
+        for (int i = 0; i < V; ++i) {
+            if (!inMST[i] && (u < 0 || key[i] < key[u]))
+                u = i;
+        }
         inMST[u] = true;
 
-        for(int v = 0; v < V; ++v)
-            if(g[u][v] && !inMST[v] && g[u][v] < key[v])
-                parent[v] = u, key[v] = g[u][v];
+        // relax edges from u
+        for (int v = 0; v < V; ++v) {
+            if (g[u][v] != 0 && !inMST[v] && g[u][v] < key[v]) {
+                key[v]    = g[u][v];
+                parent[v] = u;
+            }
+        }
     }
 
-    cout << "Edge   Weight\n";
     int total = 0;
-    for(int v = 1; v < V; ++v){
-        cout << names[parent[v]] << " - " << names[v]
-             << "    " << g[v][parent[v]] << "\n";
-        total += g[v][parent[v]];
+    cout << "Edges in MST (matrix):\n";
+    for (int v = 0; v < V; ++v) {
+        if (parent[v] != -1) {
+            cout << char('A' + parent[v]) << " - " << char('A' + v) << " : " << key[v] << "\n";
+            total += key[v];
+        }
     }
-    cout << "Total length of pipe needed: "
-         << total << " meters\n";
+    return total;
+}
+
+int main() {
+    int V = 6, start = 5;  // start at 'F'
+    vector<vector<int>> g = {
+        {0, 5, 2, 6, 4, 0},
+        {5, 0, 2, 0, 0, 0},
+        {2, 2, 0, 0, 3, 0},
+        {6, 0, 0, 0, 3, 7},
+        {4, 0, 3, 3, 0, 8},
+        {0, 0, 0, 7, 8, 0}
+    };
+
+    int total = primMST_matrix(V, g, start);
+    cout << "Total MST Weight (matrix): " << total << "\n";
     return 0;
 }
