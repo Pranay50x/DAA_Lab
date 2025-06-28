@@ -23,9 +23,10 @@ int primMST_list(int V, const vector<vector<pair<int,int>>>& adj, int start) {
                  << " : " << w << "\n";
             total += w;
         }
-        for (auto& [v,wt] : adj[u])
+        for (auto& [v,wt] : adj[u]){
             if (!vis[v])
                 pq.push({wt,v,u});
+        }
     }
     return total;
 }

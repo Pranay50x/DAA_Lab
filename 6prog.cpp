@@ -52,6 +52,12 @@ int main() {
     
     vector<int> answer = dfsGraph(v, adj);
     printAns(answer);
+
+   if ((int)answer.size() == v) {
+        cout << "The graph is connected.\n";
+    } else {
+        cout << "The graph is NOT connected.\n";
+    }
     
     clock_t et = clock();
     double time = (double(et-st))/CLOCKS_PER_SEC;

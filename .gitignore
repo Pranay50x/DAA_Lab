@@ -9,6 +9,7 @@
 *.clangd
 *.un~
 
+practice/
 
 
 # Ignore debugging files
